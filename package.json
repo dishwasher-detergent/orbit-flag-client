@@ -1,0 +1,36 @@
+{
+    "name": "@orbit-flag/client",
+    "version": "1.0.0",
+    "description": "A feature flag client SDK for evaluating flags with fallback values",
+    "author": "Kenneth Bass",
+    "license": "MIT",
+    "private": false,
+    "publishConfig": {
+        "access": "public"
+    },
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build": "tsc"
+    },
+    "dependencies": {
+        "node-fetch": "^3.3.2"
+    },
+    "devDependencies": {
+        "typescript": "^5.8.2",
+        "@types/node": "^22.13.6"
+    },
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "default": "./dist/index.js"
+        },
+        "./interfaces": {
+            "types": "./dist/interfaces.d.ts",
+            "default": "./dist/interfaces.js"
+        }
+    }
+}
