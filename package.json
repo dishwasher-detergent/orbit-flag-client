@@ -1,6 +1,6 @@
 {
     "name": "@orbit-flag/client",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "A feature flag client SDK for evaluating flags with fallback values",
     "author": "Kenneth Bass",
     "license": "MIT",
