@@ -42,7 +42,7 @@ export class OrbitFlagClient {
 
   constructor(config: ClientConfig) {
     this.config = {
-      baseUrl: "https://orbitflag.appwrite.network",
+      baseUrl: "https://orbit-flag.appwrite.network/",
       timeout: 5000,
       enableCaching: true,
       cacheTTL: 300000,

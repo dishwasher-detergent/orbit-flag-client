@@ -5,7 +5,7 @@ A simple TypeScript/JavaScript SDK for evaluating feature flags from your Orbit 
 ## Installation
 
 ```bash
-npm install @kurioh/client
+npm install @orbit-flag/client
 ```
 
 ## Usage
@@ -13,20 +13,15 @@ npm install @kurioh/client
 ### Basic Setup
 
 ```typescript
-import { OrbitFlagClient } from "@kurioh/client";
+import { OrbitFlagClient } from "@orbit-flag/client";
 
 const client = new OrbitFlagClient({
   teamId: "your-team-id-here",
   context: {
-    // Optional: context sent with every flag evaluation
     userId: "user-123",
     environment: "production",
     version: "1.2.0",
   },
-  baseUrl: "http://localhost:3000", // Optional, defaults to localhost:3000
-  timeout: 5000, // Optional, defaults to 5000ms
-  enableCaching: true, // Optional, defaults to true
-  cacheTTL: 300000, // Optional, defaults to 5 minutes
 });
 ```
 
