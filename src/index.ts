@@ -3,11 +3,12 @@ import type {
   CacheEntry,
   ClientConfig,
   FlagEvaluationRequest,
+  FlagEvaluationResponse,
 } from "./interfaces";
 
 /**
- * Dynamically imports the fetch implementation based on the environment.
- * @returns Promise<Function> - Returns the fetch implementation.
+ * Dynamically gets the fetch implementation based on the environment.
+ * @returns Promise<typeof fetch> - Returns the fetch implementation.
  */
 async function getFetch(): Promise<typeof fetch> {
   // Browser environment
@@ -21,17 +22,16 @@ async function getFetch(): Promise<typeof fetch> {
   }
 
   // Fallback to node-fetch for older Node.js versions
+  // Only import when actually in Node.js environment without native fetch
   try {
-    const { default: fetch } = await import("node-fetch");
-    return fetch as any;
+    const nodeFetch = await import("node-fetch");
+    return nodeFetch.default as any;
   } catch (err) {
     throw new Error(
-      "No fetch implementation available. Please install node-fetch for Node.js environments or use Node.js 18+."
+      "No fetch implementation available. Please install node-fetch for Node.js <18 environments."
     );
   }
 }
-
-const fetchImplementation = getFetch();
 
 /**
  * Simple boolean feature flag client.
@@ -73,7 +73,6 @@ export class OrbitFlagClient {
    * @returns Promise<boolean> - The flag value
    */
   async evaluate(flagKey: string, fallback: boolean = false): Promise<boolean> {
-    // Check cache first
     if (this.config.enableCaching) {
       const cached = this.getCachedValue(flagKey);
       if (cached !== null) {
@@ -84,8 +83,8 @@ export class OrbitFlagClient {
     try {
       const response = await this.evaluateFlag(flagKey);
 
-      if (response.data !== null) {
-        const flagValue = Boolean(response.data);
+      if (response.data && response.data.value !== null) {
+        const flagValue = Boolean(response.data.value);
 
         // Cache the result
         if (this.config.enableCaching) {
@@ -161,14 +160,16 @@ export class OrbitFlagClient {
    * @param flagKey - The flag key to evaluate
    * @returns Promise<ApiResponse<boolean>> - The API response
    */
-  private async evaluateFlag(flagKey: string): Promise<ApiResponse<boolean>> {
+  private async evaluateFlag(
+    flagKey: string
+  ): Promise<ApiResponse<FlagEvaluationResponse>> {
     const request: FlagEvaluationRequest = {
       teamId: this.config.teamId,
       flagKey: flagKey,
       ...(this.config.context && { context: this.config.context }),
     };
 
-    return this.fetchApi<boolean>("/api/evaluate", {
+    return this.fetchApi<FlagEvaluationResponse>("/api/evaluate", {
       method: "POST",
       headers: {
         "Content-Type": "text/plain",
@@ -192,7 +193,7 @@ export class OrbitFlagClient {
     let error: Error | null = null;
 
     try {
-      const fetch = await fetchImplementation;
+      const fetch = await getFetch();
       const controller = new AbortController();
       const timeoutId = setTimeout(
         () => controller.abort(),

@@ -21,6 +21,13 @@ export interface FlagEvaluationRequest {
   context?: Record<string, any>;
 }
 
+export interface FlagEvaluationResponse {
+  success: boolean;
+  flagKey: string;
+  value: string;
+  variation: string;
+  reason: string;
+}
 export interface CacheEntry {
   data: boolean;
   timestamp: number;
